@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+{%for blog in posts.object_list %}
+    <br><br>
+    <center>
+      <div class="col-md-4">
+      <div class="card mb-4 shadow-sm">
+          {% csrf_token %} 
+          <img src="{{blog.image}}" width="100%" height="255"/>
+          <div class="card-body">
+              <h3><a href="{% url 'detail' blog.id %}">{{blog.title}}</a></h3>    
+              <p class="card-text">
+                {{blog.sum}}...
+              </p>
+              <div class="d-flex justify-content-between align-items-center">
+                  <div class="btcn-group">
+                      <type="button" class="btn btn-light" disabled>작성일 : {{blog.date}}</button>
+                      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                  </div>
+                  <type="button" class="btn btn-light" disabled>작성자 : {{blog.writer}}</button>
+              </div>
+          </div>
+      </div>
+      </div>
+    </center>
+    {% endfor %}
+
+    <br><br><hr>
+    <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+        &nbsp;
+        {% if posts.has_previous %}
+        <li class="page-item" style="font-family:cursive;"><a class="page-link" href="?page=1">First</a></li>
+        <li class="page-item" style="font-family:cursive;"><a class="page-link" href="?page={{posts.previous_page_number}}">Previous</a></li>
+        {% endif %}
+        
+        {% for num in posts.paginator.page_range %}
+            {% ifequal num posts.number %}
+            <li class="active" style="font-family:cursive;"><a class="page-link" style="color: gray;" href="?page={{ num }}" disabled>{{ num }}<span class="sr-only">{{num}}</span></a></li>
+            {% else %}
+            <li style="font-family:cursive;"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endifequal %}
+        {% endfor %}
+        {% if posts.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{posts.next_page_number}}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{posts.paginator.num_pages}}">Last</a></li>
+        {% endif %}
+        </ul>
+    </nav>
+
+ {% endblock %}
