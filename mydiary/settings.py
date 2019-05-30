@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'imagekit',
     'crispy_forms',
     'diary.apps.DiaryConfig',
     'django.contrib.admin',

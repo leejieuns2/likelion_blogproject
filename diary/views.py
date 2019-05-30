@@ -27,26 +27,40 @@ def index(request):
     return render(request, 'index.html', {'blogs' : blogs, 'posts' : posts})
 
 def new (request):
-    if request.method == 'GET':
-        form = BlogForm()
-        return render(request, 'new.html', { 'form' : form })
-    else:
-        form = BlogForm(request.POST)
-        if form.is_valid():
+    # 1. 입력된 내용 처리 : POST
+    if request.method == 'POST':
+        form = BlogForm(request.POST, request.FILES)
+        if form.is_valid(): 
             blog = form.save(commit=False)
-            if request.FILES['image']:
-                myfile = request.FILES['image']
-                fs = FileSystemStorage()
-                filename = fs.save(myfile.name, myfile)
-                blog.image = fs.url(filename)
             blog.date = timezone.now()
             blog.writer = User.objects.get(username = request.user.get_username())
             blog.save()
-        return redirect('/') 
+            return redirect('/')
+            
+    # 2. 빈 페이지 띄워주는 기능 : GET
+    else:
+        form = BlogForm()
+        return render(request, 'new.html', {'form': form})
+
+    # if request.method == 'GET':
+    #     form = BlogForm()
+    #     return render(request, 'new.html', { 'form' : form })
+    # else:
+    #     form = BlogForm(request.POST)
+    #     if form.is_valid():
+    #         blog = form.save(commit=False)
+    #         if request.FILES['image']:
+    #             myfile = request.FILES['image']
+    #             fs = FileSystemStorage()
+    #             filename = fs.save(myfile.name, myfile)
+    #             blog.image = fs.url(filename)
+    #         blog.date = timezone.now()
+    #         blog.writer = User.objects.get(username = request.user.get_username())
+    #         blog.save()
+    #     return redirect('/') 
 
 def detail(request, blog_id):
-    blog = Blog.objects.get(pk = blog_id) # pk에 조건 여러가지 걸수 있음 #
-
+    blog = get_object_or_404(Blog, pk=blog_id)
     return render(request, 'detail.html', {'blog': blog})
 
 def edit(request, blog_id):
